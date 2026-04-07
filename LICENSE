@@ -1,0 +1,32 @@
+IPTV - Proprietary Software License
+
+Copyright (c) 2026 RebelStream. All rights reserved.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software in binary/container form (the "Software"), to use the
+Software for personal, non-commercial purposes, subject to the following
+conditions:
+
+1. You MAY use the Software (Docker image) for personal, non-commercial
+   purposes.
+
+2. You MAY NOT reverse-engineer, decompile, disassemble, or otherwise
+   attempt to derive the source code of the Software.
+
+3. You MAY NOT modify, adapt, translate, or create derivative works based
+   on the Software.
+
+4. You MAY NOT redistribute, sublicense, sell, lease, or otherwise transfer
+   the Software or any rights therein to any third party.
+
+5. You MAY NOT use the Software for any commercial purpose.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+Commercial use of this Software is strictly prohibited.

@@ -1,0 +1,93 @@
+name: Bug Report
+description: Report a bug or unexpected behavior
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. Please fill out the sections below so we can reproduce and fix it.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What happened? What did you expect to happen?
+      placeholder: Describe the issue...
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce this?
+      placeholder: |
+        1. Start the container
+        2. Open the playlist URL
+        3. ...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: client
+    attributes:
+      label: IPTV Client
+      description: Which app are you using to consume the streams?
+      options:
+        - Jellyfin
+        - Plex
+        - Emby
+        - VLC
+        - KODI
+        - Web Dashboard
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: instance-id
+    attributes:
+      label: Instance ID
+      description: "Found in the web dashboard under **Settings > Server Info > Instance ID**"
+      placeholder: "e.g. a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: "Found in the web dashboard under **Settings > Server Info > Version**"
+      placeholder: "e.g. 1.0.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: deployment
+    attributes:
+      label: Deployment Method
+      options:
+        - Docker Compose
+        - Docker Run
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: If applicable, add screenshots to help explain the problem.
+    validations:
+      required: false
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - Low
+        - Normal
+        - High
+    validations:
+      required: false

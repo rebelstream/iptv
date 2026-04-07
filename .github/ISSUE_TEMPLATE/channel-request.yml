@@ -1,0 +1,38 @@
+name: Channel Request
+description: Request a new channel or report a broken stream
+title: "[Channel]: "
+labels: ["channel"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template to request a new channel or report a channel that isn't working.
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Request Type
+      options:
+        - Missing channel
+        - Broken / not loading
+        - Wrong EPG data
+        - Wrong channel logo
+    validations:
+      required: true
+
+  - type: input
+    id: channel
+    attributes:
+      label: Channel Name
+      description: The name of the channel or sport event
+      placeholder: "e.g. ESPN, NBC Sports, Lakers vs Celtics"
+    validations:
+      required: true
+
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: Any additional context (error messages, what you see, etc.)
+    validations:
+      required: false
