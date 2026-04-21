@@ -34,13 +34,6 @@ Designed for **Jellyfin**, **Plex**, **Emby**, and other IPTV apps.
 </details>
 
 <details>
-<summary><strong>Sports</strong> — live events sorted by start time</summary>
-<br>
-
-![Sports](screenshots/sports.png)
-</details>
-
-<details>
 <summary><strong>Channel Detail</strong> — video player with program guide</summary>
 <br>
 
@@ -48,17 +41,24 @@ Designed for **Jellyfin**, **Plex**, **Emby**, and other IPTV apps.
 </details>
 
 <details>
-<summary><strong>Sport Event</strong> — live scores from ESPN</summary>
-<br>
-
-![Sport Event](screenshots/event-detail.png)
-</details>
-
-<details>
 <summary><strong>Guide</strong> — EPG program schedule</summary>
 <br>
 
 ![Guide](screenshots/guide.png)
+</details>
+
+<details>
+<summary><strong>Sports</strong> — live events sorted by start time</summary>
+<br>
+
+![Sports](screenshots/sports.png)
+</details>
+
+<details>
+<summary><strong>Sport Event</strong> — live scores from ESPN</summary>
+<br>
+
+![Sport Event](screenshots/event-detail.png)
 </details>
 
 <details>
@@ -70,19 +70,43 @@ Designed for **Jellyfin**, **Plex**, **Emby**, and other IPTV apps.
 
 ## Features
 
-- **176+ TV channels** with logos and persistent channel numbers
-- **Live sports events** (NHL, NFL, NBA, MLB, Soccer, PPV, and more) with accurate start times
+- **380+ TV channels** with logos and persistent channel numbers that never reshuffle
+- **Live sports events** -- see [Supported Live Sports](#supported-live-sports) below
+- **Custom M3U sources** -- add your own M3U URLs or upload files to merge into the playlist; edit the URL or replace the uploaded file later without losing channel numbers
 - **Channel categories** -- Sports, News, Local, Kids, Movies, Entertainment, Lifestyle, Documentary, and more
-- **Local station detection** -- identifies call signs (KABC, WCBS, etc.) with network affiliate and market info
+- **Local station detection** -- identifies call signs (KABC, WCBS, etc.)
+- **Multi-source stream fallback** -- events and channels automatically try alternate providers if the primary feed fails, both at refresh time and mid-watch
+- **Broadcast-network affiliate fallback** -- ABC / CBS / NBC / FOX automatically fall through to the flagship East Coast affiliate when the network's own feed isn't playable
 - **Stream health monitoring** -- automatically detects offline channels and recovers them
-- **Live sports scores** -- real-time scores and game status from ESPN in the web dashboard
-- 3-day XMLTV EPG guide with per-channel schedules
+- **ESPN-powered live sports** -- real-time scores, period-by-period linescore, venue, weather, and game situation data
+- **Rich EPG data** -- 24-hour XMLTV guide with show descriptions, episode info, season/episode numbers, TV ratings, and show/movie poster artwork
+- **Horizontal timeline guide** -- scrollable program grid with sticky channel column and current-time indicator
+- **Theme switcher** -- light, dark, or auto (system preference detection)
+- **Built-in video player** -- program progress bar, now-playing, up-next preview, and event scoreboards
+- **Docker-network friendly URLs** -- one-click toggle in Settings switches copied playlist / EPG URLs between the dashboard's origin and the container's internal hostname, so Jellyfin / Plex containers on the same Docker network work without hand-editing
+- **Targeted refresh controls** -- refresh just channels, just events, just the guide, or everything
+- **Automatic failover** -- if a live stream hiccups mid-watch, the proxy switches to the next provider without ending the session
+- **Cache survives restarts** -- the playlist, guide, and in-flight stream tokens are restored on boot, so clients keep playing through a container restart
 - Continuous MPEG-TS stream proxy (works like a real TV tuner for Jellyfin/ffmpeg)
-- Web dashboard with channel detail pages, program guide, and built-in video player
 - Sport events sorted by start time with team logos and pregame/postgame EPG entries
 - API key protection for playlist and EPG endpoints
 - Automatic hourly refresh with offline channel recovery every 5 minutes
+- Graceful shutdown with SIGTERM handling
 - Multi-architecture Docker support (amd64, arm64)
+
+## Supported Live Sports
+
+The following leagues currently have working live event feeds:
+
+| League  | Sport             |
+|---------|-------------------|
+| **NHL** | Ice Hockey        |
+| **NFL** | American Football |
+| **NBA** | Basketball        |
+| **MLB** | Baseball          |
+| **MLS** | Soccer            |
+
+ESPN is the source of truth for all schedules, team names, and scores — scrapers only contribute stream URLs that are cross-referenced against ESPN's canonical game data. Other leagues will be added as upstream feeds become available. To request a new league, [open a feature request](https://github.com/rebelstream/iptv/issues/new/choose).
 
 ## Quick Start
 
@@ -95,6 +119,7 @@ services:
     iptv:
         image: rebelstream/iptv:latest
         container_name: iptv
+        hostname: iptv          # lets clients on this compose network reach us by name
         ports:
             - "8080:8080"
         environment:
@@ -154,11 +179,11 @@ Without a key, playlist and EPG are accessible to anyone on your network.
 
 ### General IPTV Clients
 
-| File | URL |
-|------|-----|
-| M3U Playlist | `http://<server-ip>:8080/playlist?key=YOUR_KEY` |
-| EPG Guide (XML) | `http://<server-ip>:8080/epg?key=YOUR_KEY` |
-| EPG Guide (Gzip) | `http://<server-ip>:8080/epg.gz?key=YOUR_KEY` |
+| File             | URL                                             |
+|------------------|-------------------------------------------------|
+| M3U Playlist     | `http://<server-ip>:8080/playlist?key=YOUR_KEY` |
+| EPG Guide (XML)  | `http://<server-ip>:8080/epg?key=YOUR_KEY`      |
+| EPG Guide (Gzip) | `http://<server-ip>:8080/epg.gz?key=YOUR_KEY`   |
 
 > **Note:** The `?key=` parameter is only required if an API key has been generated in the web dashboard under **Settings**.
 
@@ -170,9 +195,9 @@ Access the dashboard at `http://<server-ip>:8080`.
 
 - **Dashboard** -- channel/event counts, online/offline stats, live sports with start times and scores, playlist copy buttons
 - **Channels** -- searchable and filterable channel list with category badges and online/offline status. Click a channel for its detail page with video player and program guide.
-- **Sports** -- live and upcoming events sorted by start time with team logos. Click an event for its detail page with live scoreboard and video player.
-- **Guide** -- per-channel program schedule with current show highlighted, filtered to current and upcoming
-- **Settings** -- API key management, server info, version update check, manual refresh
+- **Guide** -- horizontal timeline program grid with sticky channel column, current-time indicator, and scrollable schedule
+- **Sports** -- live and upcoming events grouped by date with team logos, live scores, and "Stream Not Available Yet" indicators for upcoming games. Click an event for its detail page with live scoreboard and video player.
+- **Settings** -- API key management, theme switcher, custom M3U source management, Docker container-hostname toggle for endpoint URLs, server info, version update check, targeted manual refresh (channels / guide / events / all)
 
 ### Channel Detail
 
@@ -187,39 +212,53 @@ Click any channel to see:
 Click any sport event to see:
 - Team logos with live scores from ESPN (updates every 30 seconds)
 - Period-by-period linescore
-- Game status, venue
-- Embedded video player
+- Game status, venue, weather, and in-game situation
+- Embedded video player with automatic fallback to alternate stream sources
 
 ## Configuration
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `PORT` | `8080` | Server port |
-| `HOST` | `0.0.0.0` | Bind address |
-| `STREAM_QUALITY` | `hd` | Stream quality (`hd` or `sd`) |
-| `CRON_SCHEDULE` | `0 * * * *` | Data refresh schedule (cron) |
-| `SPORTS_EVENTS` | `true` | Set to `false` to disable sports events |
-| `CACHE_DIR` | `./data` | Directory for cached data |
-| `TZ` | `Etc/UTC` | Timezone |
+| Variable        | Default      | Description                                                                                                  |
+|-----------------|--------------|--------------------------------------------------------------------------------------------------------------|
+| `PORT`          | `8080`       | Server port                                                                                                  |
+| `HOST`          | `0.0.0.0`    | Bind address                                                                                                 |
+| `CRON_SCHEDULE` | `30 * * * *` | Data refresh schedule (cron)                                                                                 |
+| `SPORTS_EVENTS` | `true`       | Set to `false` to disable sports events                                                                      |
+| `SPORTS_MODE`   | `false`      | Sports-only mode — disables TV channels, serves only live events                                             |
+| `LEAGUES`       | `""`         | Comma-separated league codes (e.g. `NHL,NBA,MLB`) — empty means all                                          |
+| `TZ`            | `Etc/UTC`    | Timezone                                                                                                     |
 
 ### Cron Schedule Examples
 
-| Schedule | Meaning |
-|----------|---------|
-| `0 * * * *` | Every hour (default) |
-| `*/30 * * * *` | Every 30 minutes |
-| `0 */3 * * *` | Every 3 hours |
-| `0 0 * * *` | Once daily at midnight |
+| Schedule       | Meaning                                |
+|----------------|----------------------------------------|
+| `30 * * * *`   | Every hour at 30 minute mark (default) |
+| `*/30 * * * *` | Every 30 minutes                       |
+| `0 */3 * * *`  | Every 3 hours                          |
+| `0 0 * * *`    | Once daily at midnight                 |
 
 ## How It Works
 
 ### Channels
 
-On startup and every hour, the server scrapes channel data, normalizes names, detects categories, and checks stream health. Channels are sorted alphabetically and assigned persistent numbers. Offline channels are rechecked every 5 minutes.
+On startup and once an hour, the server scrapes channel data, normalizes names, detects categories, and checks stream health. Offline channels are rechecked every 5 minutes.
 
-Local broadcast stations are identified by their FCC call sign. For example, "ABC (KABC) Los Angeles" becomes **KABC (Los Angeles, CA)** with affiliate **ABC**.
+Channel numbers are **stable** — every channel has a fixed number baked into the build, so your Jellyfin/Plex bookmarks survive cache purges and upgrades. Numbers are allocated in ranges:
+
+| Range  | Use                                           |
+|--------|-----------------------------------------------|
+| 1–4999 | Curated broadcast networks and cable channels |
+| 5000+  | Live sports events (assigned per refresh)     |
+| 10000+ | Custom M3U sources (one range per source)     |
+
+Local broadcast stations are identified by their FCC call sign. For example, "ABC (KABC) Los Angeles" becomes **KABC (Los Angeles, CA)** with affiliate **ABC**, and is rendered as a dynamic SVG showing the ABC network logo with the call sign and city overlay.
 
 Channels are grouped by category in the M3U playlist using `group-title`. Multiple categories are supported (e.g., a local station gets both "Local" and "News").
+
+### Custom M3U Sources
+
+Add your own M3U playlists (URL or file upload) from the Settings page. Custom channels are merged into your playlist and EPG, numbered in the 10000+ range, and persist across restarts.
+
+Each source can be edited after adding — rename it, change the URL, or upload a replacement M3U file — without losing its channel-number slot. Turn on the optional **Validate** toggle and the server health-checks each stream and marks offline ones red. While a source is being fetched or validated in the background, the entry shows a "loading" pill and updates automatically when the check completes.
 
 ### Sports Events
 
@@ -227,14 +266,12 @@ Sport events are scraped, then cross-referenced with ESPN's scoreboard API for a
 
 Each event gets EPG entries with pregame, game, and postgame blocks:
 
-| Sport | Pregame | Game | Postgame |
-|-------|---------|------|----------|
-| NFL / NCAAF / CFL | 30 min | 3.5-4 hrs | 30 min |
-| NHL | 30 min | 3 hrs | 30 min |
-| NBA / NCAAB | 30 min | 2.5 hrs | 30 min |
-| MLB | 30 min | 3.5 hrs | 30 min |
-| Soccer / MLS | 15-30 min | 2 hrs | 15-30 min |
-| UFC / Boxing / PPV | 30 min | 3 hrs | 30 min |
+| Sport | Pregame | Game      | Postgame |
+|-------|---------|-----------|----------|
+| NFL   | 30 min  | 3.5-4 hrs | 30 min   |
+| NHL   | 30 min  | 3 hrs     | 30 min   |
+| NBA   | 30 min  | 2.5 hrs   | 30 min   |
+| MLB   | 30 min  | 3.5 hrs   | 30 min   |
 
 Events are removed from the lineup 30 minutes after the postgame block ends.
 
@@ -242,11 +279,15 @@ Events are removed from the lineup 30 minutes after the postgame block ends.
 
 All persistent data is stored in the `/app/data` volume:
 
-| File | Purpose |
-|------|---------|
-| `cache.json` | Channels, events, EPG data |
-| `channel-map.json` | Master channel registry with names, categories, and sources |
-| `instance.json` | Instance ID and API key |
+| File                   | Purpose                                                         |
+|------------------------|-----------------------------------------------------------------|
+| `cache.json`           | Channels, events, and EPG data (encrypted)                      |
+| `custom-sources.json`  | User-added custom M3U source definitions                        |
+| `finished-events.json` | Recently finished sports events (keeps finals visible for ~24h) |
+| `instance.json`        | Instance ID and API key                                         |
+| `metrics.json`         | Runtime metrics (request counts, stream sessions)               |
+
+Channel numbers and the curated channel directory are baked into the image — not in persistent data — so cache purges never reshuffle numbers.
 
 ## Reverse Proxy
 
